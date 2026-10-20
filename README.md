@@ -1,44 +1,74 @@
 # Análise de Sobrevivência no Titanic
 
-Análise exploratória do clássico dataset do Titanic, buscando entender **quais fatores mais influenciaram a chance de sobrevivência** dos passageiros: classe social, sexo, idade e tamanho da família a bordo.
+Análise exploratória do dataset clássico do Titanic para investigar como **classe, sexo, idade e tamanho da família** se relacionam com a sobrevivência dos passageiros.
 
-## Sobre os dados
+## Resultado
 
-Dataset público com 891 passageiros do Titanic (nome, classe, sexo, idade, tarifa paga, porto de embarque, se sobreviveu, etc.). Fonte: dataset clássico usado em cursos e competições de ciência de dados (disponível via [Kaggle](https://www.kaggle.com/c/titanic) e biblioteca `seaborn`).
-
-## O que foi feito
-
-- Limpeza dos dados: preenchimento de idades ausentes com a mediana, remoção da coluna `deck` (muitos valores nulos) e das poucas linhas sem porto de embarque
-- Cálculo da taxa geral de sobrevivência
-- Três análises visuais cruzando sobrevivência com classe, sexo, idade e tamanho da família
-
-## Principais descobertas
-
-**Taxa geral de sobrevivência: 38,2%**
-
-1. **Classe e sexo importaram muito.** Mulheres da 1ª classe tiveram 96,7% de chance de sobreviver, contra apenas 13,5% dos homens da 3ª classe — a maior diferença do dataset.
-
-2. **Ser mulher foi o fator isolado mais forte**: 74% das mulheres sobreviveram, contra 18,9% dos homens — reflete a prioridade dada a mulheres e crianças na evacuação.
-
-3. **Família em tamanho moderado ajudou.** Passageiros com 1 a 3 familiares a bordo tiveram taxas de sobrevivência mais altas (55% a 72%) do que quem estava sozinho (30%) ou em famílias muito grandes (acima de 4 pessoas, onde a taxa cai bastante).
-
-## Gráficos
+A análise calcula uma taxa geral de sobrevivência de **38,2%** e produz três visualizações:
 
 | Sobrevivência por classe e sexo | Distribuição de idade | Sobrevivência por família |
 |---|---|---|
-| ![classe e sexo](images/sobrevivencia_classe_sexo.png) | ![idade](images/distribuicao_idade.png) | ![família](images/sobrevivencia_familia.png) |
+| ![Classe e sexo](sobrevivencia_classe_sexo.png) | ![Distribuição de idade](distribuicao_idade.png) | ![Tamanho da família](sobrevivencia_familia.png) |
 
-## Como rodar
+Principais observações:
+
+- mulheres da primeira classe apresentam a maior taxa de sobrevivência;
+- sexo e classe aparecem fortemente associados ao desfecho;
+- grupos familiares pequenos e médios apresentam resultados diferentes de passageiros sozinhos ou de famílias muito grandes.
+
+## Dados
+
+O repositório inclui uma cópia do dataset com 891 passageiros. O conjunto contém informações como classe, sexo, idade, tarifa, porto de embarque e sobrevivência.
+
+Fontes de referência:
+
+- [Kaggle — Titanic](https://www.kaggle.com/c/titanic)
+- [seaborn — Titanic dataset](https://github.com/mwaskom/seaborn-data/blob/master/titanic.csv)
+
+## Como executar
+
+Requer Python 3.10 ou mais recente.
 
 ```bash
-pip install pandas matplotlib seaborn
-python analise.py
+python -m venv .venv
 ```
 
-Os gráficos são gerados na pasta `images/`.
+No Windows:
 
-## Tecnologias usadas
+```powershell
+.venv\Scripts\python -m pip install -r requirements.txt
+New-Item -ItemType Directory -Force data, images
+Copy-Item titanic.csv data/titanic.csv
+.venv\Scripts\python analise.py
+```
+
+No Linux ou macOS:
+
+```bash
+.venv/bin/python -m pip install -r requirements.txt
+mkdir -p data images
+cp titanic.csv data/titanic.csv
+.venv/bin/python analise.py
+```
+
+Os novos gráficos serão gravados em `images/`. As imagens exibidas neste README são os resultados já publicados na raiz do repositório.
+
+## Etapas da análise
+
+1. Carregamento do CSV com pandas.
+2. Preenchimento de idades ausentes com a mediana.
+3. Remoção da coluna `deck`, que possui muitos valores ausentes.
+4. Remoção das poucas linhas sem porto de embarque.
+5. Cálculo de estatísticas descritivas.
+6. Geração de gráficos com matplotlib e seaborn.
+
+## Tecnologias
 
 - Python
-- pandas (limpeza e manipulação dos dados)
-- matplotlib / seaborn (visualização)
+- pandas
+- matplotlib
+- seaborn
+
+## Limitações
+
+Esta é uma análise exploratória e descritiva. As associações observadas não demonstram causalidade e o projeto não treina nem avalia um modelo preditivo. O preenchimento de idades ausentes pela mediana também simplifica a distribuição original.
