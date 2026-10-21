@@ -1,33 +1,41 @@
 # Análise de Sobrevivência no Titanic
 
-Análise exploratória do dataset clássico do Titanic para investigar como **classe, sexo, idade e tamanho da família** se relacionam com a sobrevivência dos passageiros.
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Tests](https://github.com/rhoneycruz-ui/titanic-analysis/actions/workflows/tests.yml/badge.svg)](https://github.com/rhoneycruz-ui/titanic-analysis/actions/workflows/tests.yml)
+[![pandas](https://img.shields.io/badge/pandas-2.2%2B-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 
-## Resultado
+Análise exploratória e reproduzível do dataset clássico do Titanic. O projeto investiga como **classe, sexo, idade e número de familiares a bordo** se relacionam com a sobrevivência dos passageiros.
 
-A análise calcula uma taxa geral de sobrevivência de **38,2%** e produz três visualizações:
+## Resultados principais
 
-| Sobrevivência por classe e sexo | Distribuição de idade | Sobrevivência por família |
-|---|---|---|
-| ![Classe e sexo](sobrevivencia_classe_sexo.png) | ![Distribuição de idade](distribuicao_idade.png) | ![Tamanho da família](sobrevivencia_familia.png) |
+| Passageiros no dataset | Passageiros analisados | Sobreviventes | Taxa de sobrevivência | Idades preenchidas |
+|---:|---:|---:|---:|---:|
+| 891 | 889 | 340 | **38,2%** | 177 |
 
-Principais observações:
+- Mulheres da 1ª classe apresentaram a maior taxa observada: **96,7%**.
+- Entre mulheres da 3ª classe, a taxa caiu para **50,0%**.
+- Homens da 3ª classe tiveram uma taxa observada de **13,5%**.
+- Passageiros com três familiares a bordo tiveram **72,4%** de sobrevivência, mas esse grupo reúne apenas 29 pessoas.
 
-- mulheres da primeira classe apresentam a maior taxa de sobrevivência;
-- sexo e classe aparecem fortemente associados ao desfecho;
-- grupos familiares pequenos e médios apresentam resultados diferentes de passageiros sozinhos ou de famílias muito grandes.
+Esses resultados são associações descritivas. Eles não demonstram causalidade.
 
-## Dados
+## Visualizações
 
-O repositório inclui uma cópia do dataset com 891 passageiros. O conjunto contém informações como classe, sexo, idade, tarifa, porto de embarque e sobrevivência.
+### Classe e sexo
 
-Fontes de referência:
+![Sobrevivência por classe e sexo](images/sobrevivencia_classe_sexo.png)
 
-- [Kaggle — Titanic](https://www.kaggle.com/c/titanic)
-- [seaborn — Titanic dataset](https://github.com/mwaskom/seaborn-data/blob/master/titanic.csv)
+### Idade e sobrevivência
+
+![Distribuição de idade por sobrevivência](images/distribuicao_idade.png)
+
+### Familiares a bordo
+
+![Sobrevivência por familiares a bordo](images/sobrevivencia_familia.png)
 
 ## Como executar
 
-Requer Python 3.10 ou mais recente.
+Requer Python 3.12 ou mais recente.
 
 ```bash
 python -m venv .venv
@@ -37,8 +45,6 @@ No Windows:
 
 ```powershell
 .venv\Scripts\python -m pip install -r requirements.txt
-New-Item -ItemType Directory -Force data, images
-Copy-Item titanic.csv data/titanic.csv
 .venv\Scripts\python analise.py
 ```
 
@@ -46,29 +52,77 @@ No Linux ou macOS:
 
 ```bash
 .venv/bin/python -m pip install -r requirements.txt
-mkdir -p data images
-cp titanic.csv data/titanic.csv
 .venv/bin/python analise.py
 ```
 
-Os novos gráficos serão gravados em `images/`. As imagens exibidas neste README são os resultados já publicados na raiz do repositório.
+O comando usa o arquivo `titanic.csv` do repositório e recria automaticamente os três gráficos em `images/`. Não é necessário copiar o dataset nem preparar diretórios manualmente.
 
-## Etapas da análise
+Para escolher outros caminhos:
 
-1. Carregamento do CSV com pandas.
-2. Preenchimento de idades ausentes com a mediana.
-3. Remoção da coluna `deck`, que possui muitos valores ausentes.
-4. Remoção das poucas linhas sem porto de embarque.
-5. Cálculo de estatísticas descritivas.
-6. Geração de gráficos com matplotlib e seaborn.
+```bash
+python analise.py --input caminho/dados.csv --output caminho/graficos
+```
 
-## Tecnologias
+## Metodologia
 
-- Python
-- pandas
-- matplotlib
-- seaborn
+1. Carrega o CSV sem modificar o arquivo original.
+2. Preenche 177 idades ausentes com a mediana.
+3. Remove a coluna `deck`, que possui muitos valores ausentes.
+4. Exclui duas linhas sem porto de embarque.
+5. Calcula as métricas sobre os 889 registros restantes.
+6. Cria `familia` somando irmãos/cônjuges (`sibsp`) e pais/filhos (`parch`).
+7. Gera os gráficos com matplotlib e seaborn.
+
+O código separa carregamento, limpeza, métricas e visualização em funções testáveis. O contrato do dataset e a geração dos arquivos são verificados automaticamente no GitHub Actions.
+
+## Testes
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+Os testes validam:
+
+- quantidade original e quantidade analisada;
+- tratamento de idade e porto de embarque;
+- taxa geral e total de sobreviventes;
+- cálculo do tamanho da família;
+- geração dos três PNGs;
+- execução por linha de comando fora da pasta do projeto.
+
+## Estrutura
+
+```text
+.
+├── analise.py
+├── titanic.csv
+├── images/
+│   ├── distribuicao_idade.png
+│   ├── sobrevivencia_classe_sexo.png
+│   └── sobrevivencia_familia.png
+├── tests/
+│   └── test_analise.py
+├── requirements.txt
+└── requirements-dev.txt
+```
+
+## Dados
+
+O repositório inclui uma cópia com 891 passageiros e campos como classe, sexo, idade, tarifa, porto de embarque e sobrevivência.
+
+Referências:
+
+- [Kaggle — Titanic](https://www.kaggle.com/c/titanic)
+- [seaborn — Titanic dataset](https://github.com/mwaskom/seaborn-data/blob/master/titanic.csv)
 
 ## Limitações
 
-Esta é uma análise exploratória e descritiva. As associações observadas não demonstram causalidade e o projeto não treina nem avalia um modelo preditivo. O preenchimento de idades ausentes pela mediana também simplifica a distribuição original.
+- A análise é exploratória e não treina um modelo preditivo.
+- O preenchimento das idades pela mediana simplifica a distribuição original.
+- Grupos familiares maiores possuem poucas observações; suas taxas devem ser interpretadas com cautela.
+- As associações observadas não estabelecem relações de causa e efeito.
+
+## Tecnologias
+
+Python · pandas · matplotlib · seaborn · pytest · GitHub Actions
